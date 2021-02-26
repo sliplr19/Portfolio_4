@@ -1,0 +1,8 @@
+---
+title: "Portfolio 4"
+author: "Lindley Slipetz"
+date: "2/26/2021"
+output: html_document
+---
+
+This is my portfolio piece dedicated to Joey. I figure, what's more romantic than writing a code for someone? To do this project, I asked him about topics that would potentially have quantitative data in which he would be interested. I found the Census of Population and Housing, 2000 for Minnesota (since Joey is from Minnesota). I will be analyzing the Native American data (since Joey is Mvskoke) in comparison to the White data. 
