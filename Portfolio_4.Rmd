@@ -5,4 +5,18 @@ date: "2/26/2021"
 output: html_document
 ---
 
-This is my portfolio piece dedicated to Joey. I figure, what's more romantic than writing a code for someone? To do this project, I asked him about topics that would potentially have quantitative data in which he would be interested. I found the Census of Population and Housing, 2000 for Minnesota (since Joey is from Minnesota). I will be analyzing the Native American data (since Joey is Mvskoke) in comparison to the White data. 
+This is my portfolio piece dedicated to Joey. I figure, what's more romantic than writing a code for someone? To do this project, I asked him to give me any question he's interested in. He settled on "who's the best rapper?". For this project I will be using two datasets. The first dataset tells me the diversity of vocabularies for each rapper. The second dataset gives me information about about the popularity of hip hop artists. I'll be looking at lyrical complexity and popularity as indicators of being the best rapper (which is probably wrong, but I don't really know if there even is a quantitative method to determine the best rapper).
+
+Let's load a package!
+
+```{r load_packages, warning = FALSE}
+library(tidyverse)
+```
+
+Let's load the data!
+
+```{r load_data}
+popularity <- read.csv("data//music.csv", header = TRUE, stringsAsFactors = FALSE)
+lyrics <- read.csv("data//music_vocab.csv", header = TRUE, stringsAsFactors = FALSE)
+```
+kjhwdkjwhd
