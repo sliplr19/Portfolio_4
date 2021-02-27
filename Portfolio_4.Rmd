@@ -20,3 +20,16 @@ popularity <- read.csv("data//music.csv", header = TRUE, stringsAsFactors = FALS
 lyrics <- read.csv("data//music_vocab.csv", header = TRUE, stringsAsFactors = FALSE)
 ```
 
+
+Now we need to make a big dataset where the values of the artists from lyrics are joined to the popularity dataset.
+
+```{r inner_join}
+all_data <- inner_join(lyrics, popularity, by = c("rapper" = "artist_lastfm"))
+```
+
+There's a problem with the popularity dataset: there are multiple artists that have the same name and there's no way to differentiate them. I'm just going to eliminate the ambiguous artists from the dataset.
+
+```{r amb}
+all_data <- all_data %>%
+  filter(ambiguous_artist == FALSE)
+```
