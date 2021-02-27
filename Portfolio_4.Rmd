@@ -28,7 +28,7 @@ all_data <- read.csv("G:\\My Drive\\DataScience\\Portfolio_4\\Portfolio_4\\data\
 ```
 
 
-Now we need to make a big dataset where the values of the artists from lyrics are joined to the popularity dataset.
+Here's where I made a big dataset where the values of the artists from lyrics are joined to the popularity dataset.
 
 ```{r inner_join}
 #popularity <- popularity %>% 
@@ -118,13 +118,13 @@ We're going to make a scatter plot with number of words on the x-axis and number
 all_data <- all_data %>%
   filter(nzchar(era) == TRUE & era != "1999s")
 all_data %>%
-   ggplot(aes(x=as.numeric(words), y= as.numeric(listeners_lastfm), color = era)) +
+   ggplot(aes(x=as.numeric(words), y= listeners_lastfm, color = era)) +
    geom_point() +
-  scale_y_continuous("Number of listeners on lastfm", breaks = c(500000, 1000000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 4500000, 5000000), labels = c("500000", "1000000", "1500000", "2000000", "2500000", "3000000", "3500000", "4000000", "4500000", "5000000")) +
+  scale_y_continuous("Listeners on lastfm", breaks = c(500000, 1000000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 4500000, 5000000), labels = c("500000", "1000000", "1500000", "2000000", "2500000", "3000000", "3500000", "4000000", "4500000", "5000000")) +
   scale_x_continuous("Number of words used", breaks = c(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000), labels = c("1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000")) +
   scale_color_manual(values=c("red", "#56B4E9", "orange", "purple")) +
   geom_smooth(method=lm, se=FALSE, aes(group = 1), color="black") +
-  labs(title = "Number of listeners on lastfm versus lyrical complexity")
+  labs(title = "Listeners on lastfm versus lyrical complexity")
 
 ```
 
@@ -140,7 +140,7 @@ all_data %>%
   scale_x_continuous("Number of words used", breaks = c(3000, 3500, 4000, 4500, 5000), labels = c("3000", "3500", "4000", "4500", "5000"), limits=c(3000, 5500)) +
   scale_color_manual(values=c("red", "#56B4E9", "orange", "purple")) +
   geom_smooth(method=lm, se=FALSE, aes(group = 1), color="black", fullrange=TRUE) +
-  labs(title = "Listeners on lastfm versus lyrical complexity")
+  labs(title = "Most popular versus lyrical complexity")
 
 ```
 
@@ -156,7 +156,7 @@ all_data %>%
   scale_x_continuous("Number of words used", breaks = c(5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500), labels = c("5500", "5750", "6000", "6250", "6500", "6750", "7000", "7250", "7500"), limits=c(5500,7500)) +
   scale_color_manual(values=c("red", "#56B4E9", "orange", "purple")) +
   geom_smooth(method=lm, se=FALSE, aes(group = 1), color="black") +
-  labs(title = "Number of listeners on lastfm versus lyrical complexity")
+  labs(title = "Number of listeners versus most complex")
 
 ```
 
