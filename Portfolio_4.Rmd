@@ -16,15 +16,24 @@ library(tidyverse)
 Let's load the data!
 
 ```{r load_data}
-popularity <- read.csv("data//music.csv", header = TRUE, stringsAsFactors = FALSE)
-lyrics <- read.csv("data//music_vocab.csv", header = TRUE, stringsAsFactors = FALSE)
+#popularity <- read.csv("data//music.csv", header = TRUE, #stringsAsFactors = FALSE)
+#lyrics <- read.csv("data//music_vocab.csv", header = TRUE, #stringsAsFactors = FALSE)
+```
+
+Hmm...something weird happened to my data after I loaded it (like the data disappeared from the file). I don't really feel like trying to find it again on google. Since I've already made the combined datafile that I need, I'll just save it and reload it here.
+
+```{r all_data}
+#write.csv(all_data, "G:\\My #Drive\\DataScience\\Portfolio_4\\Portfolio_4\\data\\all_dat#a.csv")
+all_data <- read.csv("G:\\My Drive\\DataScience\\Portfolio_4\\Portfolio_4\\data\\all_data.csv", header = TRUE, stringsAsFactors = FALSE )
 ```
 
 
 Now we need to make a big dataset where the values of the artists from lyrics are joined to the popularity dataset.
 
 ```{r inner_join}
-all_data <- inner_join(lyrics, popularity, by = c("rapper" = "artist_lastfm"))
+#popularity <- popularity %>% 
+  #mutate(artist_lastfm = rapper)
+#all_data <- inner_join(lyrics, popularity, by = "rapper")
 ```
 
 There's a problem with the popularity dataset: there are multiple artists that have the same name and there's no way to differentiate them. I'm just going to eliminate the ambiguous artists from the dataset.
@@ -59,7 +68,8 @@ all_data %>%
   scale_x_discrete(name ="Era", 
                     limits=c("1980s", "1990s", 
                              "2000s", "2010s")) +
-  scale_fill_manual(values=c("red", "#56B4E9", "orange", "purple"))
+  scale_fill_manual(values=c("red", "#56B4E9", "orange", "purple")) + 
+  labs(title = "Number of words used by era")
 
 ```
 
@@ -70,4 +80,86 @@ tapply(as.numeric(all_data$words), all_data$era, summary)
 ```
 As we saw in the graph, the 2010s have the lowest minimum and the 2000s have the highest maximum. The 1980s and the 2000s have similar means. The 2000s have the highest mean and the 2010s have the lowest mean. So, if you're interested in rappers with complex vocabularies, you should probably listen to something from the 2000s. If you want something simple, then the 2010s is the way to go.
 
-To conclude this section, if having a complex vocabulary is equated with being the best rapper, then Busdriver is the best rapper. He is also from the era of the most complex lyrics, so maybe the 2000s are also the best era for hip hop. Next, we're going to look at popularity as an indicator of being the best.
+To conclude this section, if having a complex vocabulary is equated with being the best rapper, then Busdriver is the best rapper. He is also from the era of the most complex lyrics, so maybe the 2000s are also the best era for hip hop. Next, we're going to look at popularity (# of listeners on lastfm) as an indicator of being the best.
+
+We'll start like before and do a descending list with number of listeners
+
+```{r pop_rank}
+all_data %>%
+  arrange(desc(listeners_lastfm))
+```
+
+Eminem has the most listeners and K-Rino has the least number of listeners. Before looking at if this means one is the best or the worst (...and I'm seriously hoping we don't find out Eminem is the best), let's do another graph comparing by era.
+42505 4517997
+
+```{r box_pop}
+all_data %>%
+   ggplot(aes(x=era, y= as.numeric(listeners_lastfm), fill=era)) +
+   geom_boxplot() +
+  scale_y_continuous("Number of listeners on lastfm", breaks = c(500000, 1000000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 4500000, 5000000), labels = c("500000", "1000000", "1500000", "2000000", "2500000", "3000000", "3500000", "4000000", "4500000", "5000000")) +
+  scale_x_discrete(name ="Era", 
+                    limits=c("1980s", "1990s", 
+                             "2000s", "2010s")) +
+  scale_fill_manual(values=c("red", "#56B4E9", "orange", "purple")) +
+  labs(title = "Listeners on lastfm by era")
+
+```
+
+The minimums and the medians for all the graphs look quite similar. The 1990s have a greater interquartile range than the other eras, but I wouldn't say it's that much diffrent than the 2000s. The 1980s have the lowest maximum. The 2000s have some outliers that are way above everyon else. Generally, it looks like for all eras, number of listens falls betwwn 250,000 and 1,500,000. Let's look at the descriptives.
+
+```{r pop_des}
+tapply(as.numeric(all_data$listeners_lastfm), all_data$era, summary)
+```
+The 2000s have the highest maximum and the 1980s have the lowest minimum. The 2000s also have the highest mean and the 2010s have the lowest mean. So, generally people listen to hip hop from the 2000s more than they listen to hip hop from the 2010s. This is interesting because we also saw that the 2000s had the highest mean lyrical complexity, while the 2010s had the lowest mean lyrical complexity. Do people enjoy listening to greater lyrical complexity? That's a question for another time. Now, we turn to comparing popularity and lyrical complexity.
+
+We're going to make a scatter plot with number of words on the x-axis and number of listens on the y-axis with an era fill.
+
+```{r all_scatter}
+all_data <- all_data %>%
+  filter(nzchar(era) == TRUE & era != "1999s")
+all_data %>%
+   ggplot(aes(x=as.numeric(words), y= as.numeric(listeners_lastfm), color = era)) +
+   geom_point() +
+  scale_y_continuous("Number of listeners on lastfm", breaks = c(500000, 1000000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 4500000, 5000000), labels = c("500000", "1000000", "1500000", "2000000", "2500000", "3000000", "3500000", "4000000", "4500000", "5000000")) +
+  scale_x_continuous("Number of words used", breaks = c(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000), labels = c("1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000")) +
+  scale_color_manual(values=c("red", "#56B4E9", "orange", "purple")) +
+  geom_smooth(method=lm, se=FALSE, aes(group = 1), color="black") +
+  labs(title = "Number of listeners on lastfm versus lyrical complexity")
+
+```
+
+Well, this is a depressing plot: as lyrical complexity increases, popularity decreases. This goes against the hypothesis I had in the previous section that the reason that people listen to 2000s hip hop more is because of lyrical complexity. I think we should look at more graphs to see who the best rapper is. We'll look at the relationship between popularity and lyrical complexity for the top rappers in popularity and lyrical complexity.
+
+```{r pop_scatter}
+all_data <- all_data %>%
+  filter(nzchar(era) == TRUE & era != "1999s")
+all_data %>%
+   ggplot(aes(x=as.numeric(words), y= as.numeric(listeners_lastfm), color = era)) +
+   geom_point() +
+  scale_y_continuous("Number of listeners on lastfm", breaks = c(2000000, 2500000, 3000000, 3500000, 4000000, 4500000, 5000000), labels = c( "2000000", "2500000", "3000000", "3500000", "4000000", "4500000", "5000000"), limits= c(2000000, 5000000 )) +
+  scale_x_continuous("Number of words used", breaks = c(3000, 3500, 4000, 4500, 5000), labels = c("3000", "3500", "4000", "4500", "5000"), limits=c(3000, 5500)) +
+  scale_color_manual(values=c("red", "#56B4E9", "orange", "purple")) +
+  geom_smooth(method=lm, se=FALSE, aes(group = 1), color="black", fullrange=TRUE) +
+  labs(title = "Listeners on lastfm versus lyrical complexity")
+
+```
+
+For the top rappers in popularity, again we see a negative relationship between popularity and lyrical complexity. Let's look at the top artists in lyrics and see the relationship between popularity and lyrical complexity.
+
+```{r lyr_scatter}
+all_data <- all_data %>%
+  filter(nzchar(era) == TRUE & era != "1999s")
+all_data %>%
+   ggplot(aes(x=as.numeric(words), y= as.numeric(listeners_lastfm), color = era)) +
+   geom_point() +
+  scale_y_continuous("Number of listeners on lastfm", breaks = c(100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000), labels = c("100000", "200000", "300000", "400000", "500000", "600000", "700000", "800000"), limits=c(0,800000)) +
+  scale_x_continuous("Number of words used", breaks = c(5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500), labels = c("5500", "5750", "6000", "6250", "6500", "6750", "7000", "7250", "7500"), limits=c(5500,7500)) +
+  scale_color_manual(values=c("red", "#56B4E9", "orange", "purple")) +
+  geom_smooth(method=lm, se=FALSE, aes(group = 1), color="black") +
+  labs(title = "Number of listeners on lastfm versus lyrical complexity")
+
+```
+
+Finally, some good news! For artists with high lyrical complexity, the higher the lyrical complexity, the greater the popularity. 
+
+Okay, what have we learned: Busdriver has the greatest lyrical complexity which puts him in the running for being the best rapper. Alternatively, Eminem is the most popular MC which also puts him in the running for being the best rapper. For most rappers, lyrical complexity is negatively correlated with popularity. This relationship does not hold for the artists with the highest lyrical complexity. Here, lyrical complexity is associated more popularity. If you want to be the best rapper, but you're not great with words, that's fine: you can still be super popular. If you want to be the best rapper, and you're one of the best with words, you'll also be popular. I'm leaning towards Busdriver as the best rapper because he's the most popular among the great lyricists.
