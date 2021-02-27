@@ -48,7 +48,7 @@ all_data %>%
   arrange(desc(words))
 ```
 
-Busdriver has the most complex lyrics with 7,324 words. Lil baby has the least complex lyrics with 2,762 words. Let's look at the box plot of words by era and the descriptives. As part of the box plot code, I've removed commas from the data: R didn't like that when converting it to numeric.
+Busdriver has the most complex lyrics with 7,324 words. Lil baby has the least complex lyrics with 2,762 words. Let's look at the box plot of words by era and the descriptives. As part of the box plot code, I've removed commas from the data: R didn't like that when converting it to numeric. Also, we're going to make the graph Ninja Turtle colored for Joey.
 
 ```{r box_lyrics}
 all_data[,'words'] <- gsub(",","",all_data[,'words'])
@@ -58,8 +58,16 @@ all_data %>%
   scale_y_continuous("Number of words used", breaks = c(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000), labels = c("1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000")) +
   scale_x_discrete(name ="Era", 
                     limits=c("1980s", "1990s", 
-                             "2000s", "2010s"))
+                             "2000s", "2010s")) +
+  scale_fill_manual(values=c("red", "#56B4E9", "orange", "purple"))
 
 ```
 
-The minimum number of words is least during the 2010s, and the maximum number of words is greatest during the 2000s. Lil baby is from the 2010s and Busdriver is from the 2000s, so this makes sense. The median from the 1980s to the 2000s stayed pretty constant (between 4500 and 5000), but it plummeted in the 2010s (between 3500 and 4000). The interquartile range is greatest for the 2000s (but seemingly not that much greater than the 1990s and the 2010s), and smallest for the 1980s. I think the main take-away from this graph is that hip hop became much less complex during the 2010s.
+The minimum number of words is least during the 2010s, and the maximum number of words is greatest during the 2000s. Lil baby is from the 2010s and Busdriver is from the 2000s, so this makes sense. The median from the 1980s to the 2000s stayed pretty constant (between 4500 and 5000), but it plummeted in the 2010s (between 3500 and 4000). The interquartile range is greatest for the 2000s (but seemingly not that much greater than the 1990s and the 2010s), and smallest for the 1980s. I think the main take-away from this graph is that hip hop became much less complex during the 2010s. Let's look at descriptives to see if that's supported.
+
+```{r words_des}
+tapply(as.numeric(all_data$words), all_data$era, summary)
+```
+As we saw in the graph, the 2010s have the lowest minimum and the 2000s have the highest maximum. The 1980s and the 2000s have similar means. The 2000s have the highest mean and the 2010s have the lowest mean. So, if you're interested in rappers with complex vocabularies, you should probably listen to something from the 2000s. If you want something simple, then the 2010s is the way to go.
+
+To conclude this section, if having a complex vocabulary is equated with being the best rapper, then Busdriver is the best rapper. He is also from the era of the most complex lyrics, so maybe the 2000s are also the best era for hip hop. Next, we're going to look at popularity as an indicator of being the best.
