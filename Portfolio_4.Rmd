@@ -33,3 +33,33 @@ There's a problem with the popularity dataset: there are multiple artists that h
 all_data <- all_data %>%
   filter(ambiguous_artist == FALSE)
 ```
+
+There's also some missing data in the lyrics data. Let's get rid of that.
+
+```{r missing_lyr}
+all_data <- all_data %>%
+  filter(words != "Not enough" & words != "not enough" & nzchar(words) == TRUE)
+```
+
+One way we can judge the best rapper is by complexity of lyrics. Let's look at the words variable. We'll start by looking at who has the most and the least diverse vocabulary.
+
+```{r vocab_rank}
+all_data %>%
+  arrange(desc(words))
+```
+
+Busdriver has the most complex lyrics with 7,324 words. Lil baby has the least complex lyrics with 2,762 words. Let's look at the box plot of words by era and the descriptives. As part of the box plot code, I've removed commas from the data: R didn't like that when converting it to numeric.
+
+```{r box_lyrics}
+all_data[,'words'] <- gsub(",","",all_data[,'words'])
+all_data %>%
+   ggplot(aes(x=era, y= as.numeric(words), fill=era)) +
+   geom_boxplot() +
+  scale_y_continuous("Number of words used", breaks = c(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000), labels = c("1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000")) +
+  scale_x_discrete(name ="Era", 
+                    limits=c("1980s", "1990s", 
+                             "2000s", "2010s"))
+
+```
+
+The minimum number of words is least during the 2010s, and the maximum number of words is greatest during the 2000s. Lil baby is from the 2010s and Busdriver is from the 2000s, so this makes sense. The median from the 1980s to the 2000s stayed pretty constant (between 4500 and 5000), but it plummeted in the 2010s (between 3500 and 4000). The interquartile range is greatest for the 2000s (but seemingly not that much greater than the 1990s and the 2010s), and smallest for the 1980s. I think the main take-away from this graph is that hip hop became much less complex during the 2010s.
